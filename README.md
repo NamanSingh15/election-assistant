@@ -2,99 +2,94 @@
 
 > An interactive, AI-powered assistant that helps citizens understand India's democratic election process — from voter registration to result certification.
 
-**Powered by Google Vertex AI (Gemini 2.0 Flash) · Google Maps · Cloud Run**
+**Powered by Google Vertex AI (Gemini 2.5 Flash) · Google Maps · Cloud Run**
 
 ---
 
-## Chosen Vertical
+## 🏆 Chosen Vertical
 
 **Civic Engagement / Government Services** — helping Indian citizens become informed voters by guiding them through the complete election process in a clear, non-partisan, and accessible way.
 
 ---
 
-## How It Works
+## 🏗️ Architecture
 
 ```
 Browser ──HTTPS──► Cloud Run (FastAPI)
                         │
-                        ├── GET /          → Serves the React-style SPA (index.html)
+                        ├── GET /          → Serves SPA (index.html)
                         ├── GET /assets/*  → Static CSS/JS
-                        └── POST /api/chat → Vertex AI Gemini 2.0 Flash
+                        └── POST /api/chat → Vertex AI Gemini 2.5 Flash
                                                   │
-                                            Google Cloud IAM
-                                         (Application Default Credentials)
+                                            Google Cloud IAM (ADC)
 ```
 
-The frontend is a fully static SPA served by the same FastAPI backend on Cloud Run. No API keys are exposed to the browser — Vertex AI calls are made server-side using Cloud Run's attached service account.
+**Security**: No API keys in the browser. Cloud Run uses Application Default Credentials — Vertex AI calls are server-side only.
+
+**Local Dev**: Uses `GEMINI_API_KEY` from `.env` for offline development.
 
 ---
 
-## Features
+## ✨ Features
 
 | Feature | Description |
 |---|---|
-| 🤖 AI Chat Assistant | Vertex AI Gemini answers any election question with India-specific context |
-| 📋 6-Step Election Wizard | Guided walkthrough: Registration → Voting → Results |
-| 📍 Polling Booth Finder | Google Maps JavaScript API + Places to find nearby stations |
-| 📖 Election Glossary | Searchable definitions for EVM, NOTA, EPIC, MCC, and more |
-| ♿ Fully Accessible | ARIA labels, keyboard navigation, skip links, screen-reader support |
-| 📱 Responsive | Mobile-first design, works on all screen sizes |
+| 🤖 AI Chat Assistant | Vertex AI Gemini 2.5 Flash — non-partisan election Q&A |
+| 📋 6-Step Election Wizard | Registration → Voting → Results with checklists |
+| 📍 Polling Booth Finder | Google Maps JavaScript API + Places API |
+| 📖 Election Glossary | Searchable: EVM, NOTA, EPIC, MCC, VVPAT + more |
+| ♿ Fully Accessible | ARIA labels, skip links, keyboard nav, screen-reader support |
+| 📱 Responsive Design | Mobile-first, works on all screen sizes |
 
 ---
 
-## Google Services Used
+## 🔧 Google Services Used
 
 | Service | How It's Used |
 |---|---|
-| **Vertex AI (Gemini 2.0 Flash)** | AI chat backend — election Q&A with contextual system prompt |
-| **Google Cloud Run** | Hosts the FastAPI server (auto-scales to zero) |
-| **Google Maps JavaScript API** | Interactive map in the polling booth finder |
+| **Vertex AI (Gemini 2.5 Flash)** | AI chat — election Q&A with contextual system prompt |
+| **Google Cloud Run** | Hosts FastAPI server (auto-scales to zero) |
+| **Google Maps JavaScript API** | Interactive dark-themed polling booth map |
 | **Google Places API** | Nearby search for polling stations |
-| **Google Fonts** | Outfit + Inter typography |
+| **Google Geocoding API** | Convert addresses to map coordinates |
+| **Google Fonts** | Outfit + Inter premium typography |
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 election-assistant/
-├── main.py                  # FastAPI backend + Vertex AI integration
+├── main.py                  # FastAPI + Vertex AI / Gemini API integration
 ├── requirements.txt
 ├── Dockerfile               # Multi-stage, non-root, Cloud Run-ready
-├── cloudbuild.yaml          # Cloud Build CI/CD pipeline
-├── .gitignore
+├── cloudbuild.yaml          # Cloud Build CI/CD
 ├── tests/
-│   └── test_main.py         # Pytest suite (health, chat, validation, error cases)
+│   └── test_main.py         # 9 pytest cases
 └── frontend/
-    ├── index.html           # SPA with full ARIA/semantic HTML
-    ├── css/style.css        # Dark-mode, glassmorphism, responsive design
+    ├── index.html           # SPA — full ARIA/semantic HTML5
+    ├── css/style.css        # Dark-mode glassmorphism + animations
     └── js/
-        ├── app.js           # Bootstrap, navigation, particles, Maps loader
-        ├── chat.js          # Chat UI, API calls, markdown rendering
-        ├── wizard.js        # 6-step wizard with localStorage persistence
+        ├── app.js           # Bootstrap, navigation, particles
+        ├── chat.js          # AI chat UI with typing indicators
+        ├── wizard.js        # 6-step wizard + localStorage
         ├── maps.js          # Google Maps + Places integration
         └── knowledgeBase.js # Static election data (steps, FAQs, glossary)
 ```
 
 ---
 
-## Local Development
-
-### Prerequisites
-- Python 3.12+
-- Google Cloud SDK (`gcloud`) authenticated
-- A GCP project with Vertex AI API enabled
+## 🚀 Local Development
 
 ```bash
-# Clone and install
 git clone https://github.com/YOUR_USERNAME/election-guide-assistant.git
 cd election-guide-assistant
+
 pip install -r requirements.txt
 
-# Authenticate with Google Cloud
-gcloud auth application-default login
+# Create .env for local dev
+echo "GEMINI_API_KEY=your_key_here" > .env
 
-# Run locally
 uvicorn main:app --reload --port 8080
 # Open http://localhost:8080
 ```
@@ -107,21 +102,23 @@ pytest tests/ -v
 
 ---
 
-## Deploy to Cloud Run
+## ☁️ Deploy to Cloud Run
 
-### 1. Enable APIs
+### 1. Enable required APIs
 ```bash
-gcloud services enable run.googleapis.com artifactregistry.googleapis.com aiplatform.googleapis.com --project namans-project-495216
+gcloud services enable run.googleapis.com aiplatform.googleapis.com \
+  artifactregistry.googleapis.com --project namans-project-495216
 ```
 
-### 2. Grant Vertex AI permissions
+### 2. Grant Vertex AI permissions to Cloud Run
 ```bash
+PROJECT_NUMBER=958192797065
 gcloud projects add-iam-policy-binding namans-project-495216 \
-  --member="serviceAccount:$(gcloud iam service-accounts list --filter='displayName:Default' --format='value(email)' --project namans-project-495216)" \
+  --member="serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com" \
   --role="roles/aiplatform.user"
 ```
 
-### 3. Build & Deploy
+### 3. Deploy (builds automatically via Cloud Build)
 ```bash
 gcloud run deploy election-guide-assistant \
   --source . \
@@ -133,22 +130,31 @@ gcloud run deploy election-guide-assistant \
 
 ---
 
-## Assumptions
+## 🔐 Security Notes
 
-- Election context is **India-specific** (ECI, EVM, VVPAT, Lok Sabha, EPIC, etc.)
-- The Maps API key is a **client-side restricted key** (should be restricted to the deployed domain in Google Cloud Console)
-- Vertex AI uses Cloud Run's **service account credentials** — no secrets in code
-- The assistant is **non-partisan**: it only explains process, never recommends parties/candidates
+- **No secrets in source code** — `.env` is gitignored
+- **Vertex AI uses ADC on Cloud Run** — no API key needed in production
+- **Input validation** via Pydantic models with length limits
+- **Non-root Docker user** in multi-stage Dockerfile
+- **Maps API key** should be restricted to your Cloud Run domain in GCP Console → APIs & Credentials
 
 ---
 
-## Evaluation Criteria
+## 📊 Evaluation Criteria
 
 | Criterion | Approach |
 |---|---|
-| **Code Quality** | Typed FastAPI, Pydantic validation, modular JS classes, constants extracted |
-| **Security** | No secrets in frontend, Pydantic input validation, CORS configured, non-root Docker user |
-| **Efficiency** | History capped at 10 messages, multi-stage Docker build, 2 uvicorn workers, lazy Maps load |
-| **Testing** | 9 pytest cases covering health, chat, validation, error handling, and edge cases |
-| **Accessibility** | ARIA roles, skip link, keyboard navigation, semantic HTML5, `aria-live` regions |
-| **Google Services** | Vertex AI Gemini, Google Maps JS API, Places API, Cloud Run, Google Fonts |
+| **Code Quality** | Typed FastAPI, Pydantic validation, modular ES6 JS classes |
+| **Security** | No secrets in frontend, input validation, CORS, non-root Docker |
+| **Efficiency** | History capped at 10 msgs, multi-stage Docker, lazy Maps load |
+| **Testing** | 9 pytest cases: health, chat, validation, error handling |
+| **Accessibility** | ARIA roles, skip link, keyboard nav, `aria-live` regions |
+| **Google Services** | Vertex AI, Maps JS, Places, Geocoding, Cloud Run, Fonts |
+
+---
+
+## 📋 Assumptions
+
+- Election context is **India-specific** (ECI, EVM, VVPAT, Lok Sabha, EPIC, MCC)
+- The assistant is **non-partisan**: explains process only, never recommends parties
+- Maps API key should be **HTTP referrer-restricted** in production
