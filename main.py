@@ -1,6 +1,9 @@
 """
 Election Guide Assistant — Backend API
-Powered by Vertex AI Gemini, deployed on Google Cloud Run.
+
+Auth strategy:
+  - Local dev  : GEMINI_API_KEY in .env  → uses google.genai with API key
+  - Cloud Run  : No API key needed       → uses google.genai with Vertex AI ADC
 """
 
 import logging
@@ -8,15 +11,17 @@ import os
 from pathlib import Path
 from typing import List, Optional
 
-import vertexai
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, validator
-from vertexai.generative_models import Content, GenerativeModel, Part
 
-# ── Logging ──────────────────────────────────────────────────────────────────
+# Load .env for local development (no-op on Cloud Run)
+load_dotenv()
+
+# ── Logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -24,14 +29,30 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # ── Configuration ─────────────────────────────────────────────────────────────
-PROJECT_ID = os.getenv("GCP_PROJECT_ID", "namans-project-495216")
-LOCATION = os.getenv("GCP_LOCATION", "us-central1")
-MODEL_ID = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
-MAX_HISTORY = 10  # Cap history for efficiency / token control
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")          # local dev
+PROJECT_ID     = os.getenv("GCP_PROJECT_ID", "namans-project-495216")
+LOCATION       = os.getenv("GCP_LOCATION",   "us-central1")
+MODEL_ID       = os.getenv("GEMINI_MODEL",   "gemini-2.5-flash")
+MAX_HISTORY    = 10
 
-# ── Vertex AI Init ────────────────────────────────────────────────────────────
-vertexai.init(project=PROJECT_ID, location=LOCATION)
-logger.info("Vertex AI initialised: project=%s, location=%s, model=%s", PROJECT_ID, LOCATION, MODEL_ID)
+# ── AI Backend Selection ──────────────────────────────────────────────────────
+from google import genai
+from google.genai import types as genai_types
+
+if GEMINI_API_KEY:
+    # ── Gemini Developer API (local / API-key auth) ───────────────────────────
+    ai_client = genai.Client(api_key=GEMINI_API_KEY)
+    USE_VERTEX = False
+    logger.info("Auth mode: Gemini API key  |  Model: %s", MODEL_ID)
+else:
+    # ── Vertex AI (Cloud Run with ADC / service account) ─────────────────────
+    ai_client = genai.Client(
+        vertexai=True,
+        project=PROJECT_ID,
+        location=LOCATION,
+    )
+    USE_VERTEX = True
+    logger.info("Auth mode: Vertex AI ADC  |  project=%s  model=%s", PROJECT_ID, MODEL_ID)
 
 # ── FastAPI ───────────────────────────────────────────────────────────────────
 app = FastAPI(
@@ -44,7 +65,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # Restrict to your domain in production
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
@@ -75,7 +96,7 @@ Vidhan Sabha (state assemblies), Rajya Sabha (indirect), Local Body, By-election
 7. Vote counting & result declaration
 8. Oath-taking ceremony
 
-**Voting Process**: Bring Voter ID or 12 approved alternatives, biometric \
+**Voting Process**: Bring Voter ID (EPIC) or 12 approved alternatives, biometric \
 verification, mark EVM, VVPAT slip, indelible ink on finger, NOTA option.
 
 **Candidate Rules**: Form 2B nomination, expenditure limits \
@@ -120,7 +141,7 @@ class HealthResponse(BaseModel):
     status: str
     service: str
     model: str
-    project: str
+    auth_mode: str
 
 
 # ── API Routes ────────────────────────────────────────────────────────────────
@@ -131,15 +152,15 @@ async def health_check():
         status="healthy",
         service="Election Guide Assistant",
         model=MODEL_ID,
-        project=PROJECT_ID,
+        auth_mode="gemini-api-key" if not USE_VERTEX else "vertex-ai-adc",
     )
 
 
 @app.post("/api/chat", response_model=ChatResponse, tags=["Chat"])
 async def chat(request: ChatRequest):
     """
-    Send a message to the ElectionGuide AI.
-    Maintains conversation context via history; step provides wizard context.
+    Send a message to ElectionGuide AI.
+    Uses Gemini API key locally; Vertex AI ADC on Cloud Run.
     """
     try:
         step_context = (
@@ -147,29 +168,37 @@ async def chat(request: ChatRequest):
             if request.step
             else "User is exploring the election guide generally."
         )
+        full_system_prompt = SYSTEM_PROMPT.format(step_context=step_context)
+        capped_history = request.history[-MAX_HISTORY:]
 
-        model = GenerativeModel(
-            MODEL_ID,
-            system_instruction=SYSTEM_PROMPT.format(step_context=step_context),
-        )
-
-        # Build Vertex AI history (capped for efficiency)
-        vertex_history: List[Content] = [
-            Content(
-                role="user" if msg.role == "user" else "model",
-                parts=[Part.from_text(msg.content)],
+        # Build conversation history for google.genai SDK
+        genai_history = [
+            genai_types.Content(
+                role="user" if m.role == "user" else "model",
+                parts=[genai_types.Part(text=m.content)],
             )
-            for msg in request.history[-MAX_HISTORY:]
+            for m in capped_history
         ]
 
-        chat_session = model.start_chat(history=vertex_history)
-        ai_response = chat_session.send_message(request.message)
+        # Single SDK path — api_key vs Vertex AI is handled by ai_client init
+        chat_session = ai_client.chats.create(
+            model=MODEL_ID,
+            config=genai_types.GenerateContentConfig(
+                system_instruction=full_system_prompt,
+                temperature=0.7,
+                max_output_tokens=1024,
+            ),
+            history=genai_history,
+        )
+        response = chat_session.send_message(request.message)
+        reply = response.text
 
-        logger.info("Response generated for step='%s'", request.step)
-        return ChatResponse(response=ai_response.text, step=request.step)
+        logger.info("Response generated | step='%s' | mode=%s | chars=%d",
+                    request.step, "gemini-api" if not USE_VERTEX else "vertex", len(reply))
+        return ChatResponse(response=reply, step=request.step)
 
     except Exception as exc:
-        logger.error("Vertex AI error: %s", exc, exc_info=True)
+        logger.error("AI error: %s", exc, exc_info=True)
         raise HTTPException(
             status_code=503,
             detail="AI service temporarily unavailable. Please try again.",
