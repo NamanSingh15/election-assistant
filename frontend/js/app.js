@@ -1,23 +1,33 @@
 /**
  * app.js — Application bootstrap.
  * Initialises all components, handles navigation and animations.
+ * Maps API key is fetched from /api/config (server reads from env) —
+ * it is never hardcoded in source code.
  */
-
-const MAPS_API_KEY = "AIzaSyDG6_iT6I2Zfnbbs3ZIBT6beEl2Rf5TkPE";
 
 let wizard, chatAssistant, pollingFinder;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   wizard = new ElectionWizard();
   chatAssistant = new ChatAssistant();
-  pollingFinder = new PollingFinder(MAPS_API_KEY);
 
   initNavigation();
   initParticles();
   initScrollAnimations();
-  loadGoogleMaps();
   initGlossary();
   initFinishModal();
+
+  // Fetch Maps API key securely from the backend
+  try {
+    const res = await fetch("/api/config");
+    const cfg = await res.json();
+    if (cfg.mapsApiKey) {
+      pollingFinder = new PollingFinder(cfg.mapsApiKey);
+      loadGoogleMaps(cfg.mapsApiKey);
+    }
+  } catch (e) {
+    console.warn("Could not load Maps config:", e);
+  }
 });
 
 // ── Navigation ────────────────────────────────────────────────────────────────
@@ -144,9 +154,9 @@ function initScrollAnimations() {
 }
 
 // ── Google Maps Dynamic Load ──────────────────────────────────────────────────
-function loadGoogleMaps() {
+function loadGoogleMaps(apiKey) {
   const script = document.createElement("script");
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${MAPS_API_KEY}&libraries=places&callback=initGoogleMaps`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleMaps`;
   script.async = true;
   script.defer = true;
   script.onerror = () => {

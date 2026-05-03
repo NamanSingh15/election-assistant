@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")          # local dev
+MAPS_API_KEY   = os.getenv("MAPS_API_KEY", "")         # served via /api/config
 PROJECT_ID     = os.getenv("GCP_PROJECT_ID", "namans-project-495216")
 LOCATION       = os.getenv("GCP_LOCATION",   "us-central1")
 MODEL_ID       = os.getenv("GEMINI_MODEL",   "gemini-2.5-flash")
@@ -137,6 +138,10 @@ class ChatResponse(BaseModel):
     step: Optional[str] = None
 
 
+class ConfigResponse(BaseModel):
+    mapsApiKey: str
+
+
 class HealthResponse(BaseModel):
     status: str
     service: str
@@ -145,6 +150,12 @@ class HealthResponse(BaseModel):
 
 
 # ── API Routes ────────────────────────────────────────────────────────────────
+@app.get("/api/config", response_model=ConfigResponse, tags=["Config"])
+async def get_config():
+    """Returns public runtime config — Maps API key served server-side from env."""
+    return ConfigResponse(mapsApiKey=MAPS_API_KEY)
+
+
 @app.get("/health", response_model=HealthResponse, tags=["System"])
 async def health_check():
     """Liveness probe for Cloud Run."""

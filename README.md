@@ -1,5 +1,7 @@
 # ElectionGuide AI 🗳️
 
+[![GitHub](https://img.shields.io/badge/GitHub-NamanSingh15%2Felection--assistant-blue?logo=github)](https://github.com/NamanSingh15/election-assistant)
+
 > An interactive, AI-powered assistant that helps citizens understand India's democratic election process — from voter registration to result certification.
 
 **Powered by Google Vertex AI (Gemini 2.5 Flash) · Google Maps · Cloud Run**
@@ -82,8 +84,8 @@ election-assistant/
 ## 🚀 Local Development
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/election-guide-assistant.git
-cd election-guide-assistant
+git clone https://github.com/NamanSingh15/election-assistant.git
+cd election-assistant
 
 pip install -r requirements.txt
 
