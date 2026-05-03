@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ElectionGuide AI — Your interactive, AI-powered guide to understanding India's democratic election process. Powered by Google Vertex AI." />
+  <meta name="theme-color" content="#050b18" />
+  <title>ElectionGuide AI — Understand Your Vote</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ElectionGuide AI — Understand Your Vote" />
+  <meta property="og:description" content="Interactive AI-powered guide to India's election process." />
+  <meta property="og:type" content="website" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+<body>
+
+  <!-- Skip link for keyboard/screen-reader users -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ── Navbar ─────────────────────────────────────────────────────────── -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <a href="#hero" class="nav-logo" aria-label="ElectionGuide AI home">
+      <span class="nav-logo-icon" aria-hidden="true">🗳️</span>
+      <span>Election<span>Guide</span> AI</span>
+    </a>
+
+    <ul id="nav-menu" role="list">
+      <li><a href="#hero"     class="nav-link" aria-label="Home">Home</a></li>
+      <li><a href="#wizard"   class="nav-link" aria-label="Election Timeline">Timeline</a></li>
+      <li><a href="#chat"     class="nav-link" aria-label="AI Chat Assistant">AI Chat</a></li>
+      <li><a href="#maps"     class="nav-link" aria-label="Find Polling Booth">Find Booth</a></li>
+      <li><a href="#glossary" class="nav-link" aria-label="Election Glossary">Glossary</a></li>
+      <li><a href="#chat"     class="nav-cta"  aria-label="Ask the AI assistant">Ask AI →</a></li>
+    </ul>
+
+    <button id="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-menu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+  </nav>
+
+  <main id="main-content">
+
+    <!-- ── Hero ───────────────────────────────────────────────────────────── -->
+    <section id="hero" aria-labelledby="hero-heading">
+      <canvas id="particle-canvas" aria-hidden="true"></canvas>
+      <div class="hero-bg-gradient" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <div class="hero-badge" role="note">
+          <span aria-hidden="true">🔵</span> Powered by Google Vertex AI &amp; Gemini
+        </div>
+
+        <h1 class="hero-title" id="hero-heading">
+          Understand Your Vote,<br />
+          <span class="gradient-text">Shape Your Democracy</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Your intelligent, step-by-step companion for every stage of India's
+          democratic election process — from registration to results.
+        </p>
+
+        <div class="hero-cta">
+          <a href="#wizard" class="btn-primary" aria-label="Explore the election timeline">
+            Explore Timeline →
+          </a>
+          <a href="#chat" class="btn-secondary" aria-label="Chat with ElectionGuide AI">
+            💬 Ask AI Assistant
+          </a>
+        </div>
+
+        <div class="hero-stats" role="list" aria-label="Key election facts">
+          <div class="stat-item" role="listitem">
+            <div class="stat-num">97 Cr+</div>
+            <div class="stat-label">Registered Voters</div>
+          </div>
+          <div class="stat-item" role="listitem">
+            <div class="stat-num">543</div>
+            <div class="stat-label">Lok Sabha Seats</div>
+          </div>
+          <div class="stat-item" role="listitem">
+            <div class="stat-num">6</div>
+            <div class="stat-label">Steps to Understand</div>
+          </div>
+          <div class="stat-item" role="listitem">
+            <div class="stat-num">1950</div>
+            <div class="stat-label">ECI Helpline</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── How It Works ────────────────────────────────────────────────────── -->
+    <section id="how" class="section" aria-labelledby="how-heading">
+      <div class="section-header reveal">
+        <div class="section-tag" aria-hidden="true">How It Works</div>
+        <h2 class="section-title" id="how-heading">Your Complete Election Guide</h2>
+        <p class="section-desc">Three powerful tools to make you an informed voter.</p>
+      </div>
+      <div class="how-grid">
+        <article class="how-card reveal" aria-label="Step-by-step election wizard">
+          <div class="how-icon" aria-hidden="true">📋</div>
+          <h3 class="how-title">Step-by-Step Wizard</h3>
+          <p class="how-desc">Follow India's election process across 6 guided stages with checklists and tips.</p>
+        </article>
+        <article class="how-card reveal" aria-label="AI chat assistant">
+          <div class="how-icon" aria-hidden="true">🤖</div>
+          <h3 class="how-title">AI Chat Assistant</h3>
+          <p class="how-desc">Ask any election question and get accurate, non-partisan answers powered by Gemini.</p>
+        </article>
+        <article class="how-card reveal" aria-label="Polling booth finder">
+          <div class="how-icon" aria-hidden="true">📍</div>
+          <h3 class="how-title">Find Your Booth</h3>
+          <p class="how-desc">Use Google Maps to discover polling stations near your address.</p>
+        </article>
+        <article class="how-card reveal" aria-label="Election glossary">
+          <div class="how-icon" aria-hidden="true">📖</div>
+          <h3 class="how-title">Election Glossary</h3>
+          <p class="how-desc">Searchable definitions for EVM, NOTA, EPIC, MCC, and every election term.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ── Election Timeline Wizard ───────────────────────────────────────── -->
+    <section id="wizard" class="section-full" aria-labelledby="wizard-heading">
+      <div class="section" style="padding-bottom: 0;">
+        <div class="section-header reveal">
+          <div class="section-tag" aria-hidden="true">Election Timeline</div>
+          <h2 class="section-title" id="wizard-heading">6 Steps to Being an Informed Voter</h2>
+          <p class="section-desc">Follow each step to understand the complete election journey.</p>
+        </div>
+      </div>
+
+      <div class="wizard-layout" id="wizard-container" role="region" aria-label="Election timeline wizard">
+        <!-- Progress sidebar -->
+        <nav id="wizard-progress" aria-label="Election steps navigation" role="navigation"></nav>
+
+        <!-- Step content -->
+        <div id="step-content" aria-live="polite" aria-atomic="false"></div>
+      </div>
+    </section>
+
+    <!-- ── AI Chat ──────────────────────────────────────────────────────────── -->
+    <section id="chat" class="section" aria-labelledby="chat-heading">
+      <div class="section-header reveal">
+        <div class="section-tag" aria-hidden="true">AI Assistant</div>
+        <h2 class="section-title" id="chat-heading">Ask ElectionGuide AI</h2>
+        <p class="section-desc">Powered by Google Vertex AI Gemini — your non-partisan election expert.</p>
+      </div>
+
+      <div class="chat-layout">
+        <!-- Chat window -->
+        <div class="chat-window" role="region" aria-label="AI Chat window">
+          <div class="chat-header">
+            <div class="chat-avatar" aria-hidden="true">🗳️</div>
+            <div class="chat-header-info">
+              <div class="chat-header-name">ElectionGuide AI</div>
+              <div class="chat-header-status">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span>Powered by Vertex AI Gemini</span>
+              </div>
+            </div>
+            <span id="chat-context-badge" class="hidden" aria-live="polite" aria-label="Current wizard context"></span>
+            <button class="chat-clear-btn" onclick="chatAssistant.clearHistory()" aria-label="Clear conversation history" title="Clear chat">🗑️</button>
+          </div>
+
+          <div id="chat-messages" role="log" aria-label="Conversation messages" aria-live="polite" aria-relevant="additions"></div>
+
+          <div class="chat-input-area">
+            <div class="chat-input-row">
+              <textarea
+                id="chat-input"
+                placeholder="Ask about voter registration, EVM, polling day…"
+                rows="1"
+                aria-label="Type your election question"
+                aria-multiline="true"
+              ></textarea>
+              <button id="chat-send" aria-label="Send message">➤</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="chat-sidebar" aria-label="Suggested questions and information">
+          <div class="chat-sidebar-card">
+            <div class="sidebar-title">Quick Questions</div>
+            <div id="quick-questions" role="list" aria-label="Suggested election questions"></div>
+          </div>
+          <div class="chat-sidebar-card">
+            <div class="sidebar-title">Official Resources</div>
+            <ul style="display:flex;flex-direction:column;gap:8px;" role="list">
+              <li><a href="https://eci.gov.in" target="_blank" rel="noopener noreferrer" aria-label="Election Commission of India (opens in new tab)">🏛️ eci.gov.in</a></li>
+              <li><a href="https://voterportal.eci.gov.in" target="_blank" rel="noopener noreferrer" aria-label="Voter Portal (opens in new tab)">📋 Voter Portal (NVSP)</a></li>
+              <li><a href="https://affidavit.eci.gov.in" target="_blank" rel="noopener noreferrer" aria-label="Candidate Affidavits (opens in new tab)">📄 Candidate Affidavits</a></li>
+              <li><a href="https://results.eci.gov.in" target="_blank" rel="noopener noreferrer" aria-label="Election Results (opens in new tab)">📊 Election Results</a></li>
+            </ul>
+            <div style="margin-top:16px;padding:12px;background:rgba(255,153,51,0.08);border-radius:8px;border:1px solid rgba(255,153,51,0.2);">
+              <div style="font-size:0.8rem;color:#FF9933;font-weight:600;margin-bottom:4px;">📞 ECI Helpline</div>
+              <div style="font-size:1.4rem;font-weight:800;font-family:'Outfit',sans-serif;">1950</div>
+              <div style="font-size:0.75rem;color:#8899aa;">Toll-free voter helpline</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Polling Station Finder ──────────────────────────────────────────── -->
+    <section id="maps" class="section" aria-labelledby="maps-heading">
+      <div class="section-header reveal">
+        <div class="section-tag" aria-hidden="true">Google Maps</div>
+        <h2 class="section-title" id="maps-heading">Find Your Polling Booth</h2>
+        <p class="section-desc">Search by address or use your location to discover nearby polling stations.</p>
+      </div>
+
+      <div class="maps-layout">
+        <div role="region" aria-label="Map and search">
+          <div class="maps-search-bar">
+            <label for="map-search-input" class="sr-only">Enter your address or pincode</label>
+            <input
+              type="search"
+              id="map-search-input"
+              placeholder="Enter your address or pincode (e.g. Connaught Place, New Delhi)"
+              aria-label="Enter your address or pincode to find polling booths"
+            />
+            <button id="map-search-btn" class="map-btn" aria-label="Search for polling booths">🔍 Search</button>
+            <button id="map-locate-btn" class="map-btn" aria-label="Use my current location">📍 Use My Location</button>
+          </div>
+          <div id="map-status" class="map-status" role="status" aria-live="polite">Loading map…</div>
+          <div id="map" aria-label="Google Maps showing polling station locations" role="application"></div>
+        </div>
+
+        <aside class="maps-sidebar" aria-label="Polling booth information">
+          <div class="maps-sidebar-card">
+            <div class="sidebar-title">What to Know</div>
+            <div class="maps-info-item">
+              <span class="maps-info-icon" aria-hidden="true">⏰</span>
+              <div class="maps-info-text">
+                <strong>Polling Hours</strong>
+                <span>Generally 7:00 AM – 6:00 PM on election day</span>
+              </div>
+            </div>
+            <div class="maps-info-item">
+              <span class="maps-info-icon" aria-hidden="true">🪪</span>
+              <div class="maps-info-text">
+                <strong>ID Required</strong>
+                <span>Voter ID (EPIC) or any 12 ECI-approved alternatives</span>
+              </div>
+            </div>
+            <div class="maps-info-item">
+              <span class="maps-info-icon" aria-hidden="true">♿</span>
+              <div class="maps-info-text">
+                <strong>PwD Facilities</strong>
+                <span>Wheelchair ramps, volunteers, and priority queuing available</span>
+              </div>
+            </div>
+            <div class="maps-info-item">
+              <span class="maps-info-icon" aria-hidden="true">🌐</span>
+              <div class="maps-info-text">
+                <strong>Find Official Booth</strong>
+                <span><a href="https://voterportal.eci.gov.in" target="_blank" rel="noopener noreferrer">voterportal.eci.gov.in</a></span>
+              </div>
+            </div>
+          </div>
+          <div class="maps-sidebar-card">
+            <div class="sidebar-title">Nearby Results</div>
+            <div id="map-results" role="list" aria-label="Nearby polling locations" aria-live="polite">
+              <p style="color:#55687a;font-size:0.85rem;">Search to see nearby results</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── Glossary ─────────────────────────────────────────────────────────── -->
+    <section id="glossary" class="section" aria-labelledby="glossary-heading">
+      <div class="section-header reveal">
+        <div class="section-tag" aria-hidden="true">Glossary</div>
+        <h2 class="section-title" id="glossary-heading">Election Terms Explained</h2>
+        <p class="section-desc">Every acronym and term you'll encounter during elections — searchable and clear.</p>
+      </div>
+
+      <div class="glossary-search-wrap">
+        <span class="glossary-search-icon" aria-hidden="true">🔍</span>
+        <label for="glossary-search" class="sr-only">Search election terms</label>
+        <input
+          type="search"
+          id="glossary-search"
+          placeholder="Search terms like EVM, NOTA, MCC…"
+          aria-label="Search election terms"
+        />
+      </div>
+
+      <dl id="glossary-list" role="list" aria-label="Election glossary terms and definitions"></dl>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo" aria-label="ElectionGuide AI">
+          <span class="nav-logo-icon" aria-hidden="true">🗳️</span>
+          <span>Election<span>Guide</span> AI</span>
+        </div>
+        <p>Empowering India's voters with AI-driven civic education. Non-partisan, accurate, and accessible.</p>
+      </div>
+      <div class="footer-links">
+        <h3>Quick Links</h3>
+        <ul role="list">
+          <li><a href="#wizard">Election Timeline</a></li>
+          <li><a href="#chat">AI Assistant</a></li>
+          <li><a href="#maps">Find Polling Booth</a></li>
+          <li><a href="#glossary">Glossary</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Official Sites</h3>
+        <ul role="list">
+          <li><a href="https://eci.gov.in" target="_blank" rel="noopener noreferrer">Election Commission of India</a></li>
+          <li><a href="https://voterportal.eci.gov.in" target="_blank" rel="noopener noreferrer">Voter Portal (NVSP)</a></li>
+          <li><a href="https://affidavit.eci.gov.in" target="_blank" rel="noopener noreferrer">Candidate Affidavits</a></li>
+          <li><a href="https://results.eci.gov.in" target="_blank" rel="noopener noreferrer">Election Results</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 ElectionGuide AI. Educational use only. Non-partisan and unaffiliated with any political party.</span>
+      <span class="powered-badge" role="note">
+        <span aria-hidden="true">☁️</span> Powered by Google Vertex AI &amp; Cloud Run
+      </span>
+    </div>
+  </footer>
+
+  <!-- ── Finish Modal ───────────────────────────────────────────────────────── -->
+  <div id="finish-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-emoji" aria-hidden="true">🎉</div>
+      <h2 id="modal-title">You're Ready to Vote!</h2>
+      <p>You've completed all 6 steps of the election guide. You're now an informed voter. Go out there and make your voice heard!</p>
+      <button id="modal-close" aria-label="Close completion dialog">Let's Go! 🇮🇳</button>
+    </div>
+  </div>
+
+  <!-- Screen-reader only utility class -->
+  <style>.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}</style>
+
+  <!-- Scripts (order matters: data → components → app) -->
+  <script src="/assets/js/knowledgeBase.js"></script>
+  <script src="/assets/js/wizard.js"></script>
+  <script src="/assets/js/chat.js"></script>
+  <script src="/assets/js/maps.js"></script>
+  <script src="/assets/js/app.js"></script>
+
+</body>
+</html>

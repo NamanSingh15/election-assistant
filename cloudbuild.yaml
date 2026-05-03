@@ -1,0 +1,27 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/namans-project-495216/election-guide-assistant:$COMMIT_SHA'
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/namans-project-495216/election-guide-assistant:$COMMIT_SHA'
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'election-guide-assistant'
+      - '--image=gcr.io/namans-project-495216/election-guide-assistant:$COMMIT_SHA'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--project=namans-project-495216'
+
+images:
+  - 'gcr.io/namans-project-495216/election-guide-assistant:$COMMIT_SHA'
